@@ -2539,3 +2539,34 @@ index 5f81241b7..cff91f6dd 100644
      if (my_statx_func != NULL) {
          capabilities |= sun_nio_fs_UnixNativeDispatcher_SUPPORTS_BIRTHTIME;
 
+
+diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
+index 05b9a774b..2269d36e4 100644
+--- a/make/autoconf/flags-cflags.m4
++++ b/make/autoconf/flags-cflags.m4
+@@ -717,8 +717,9 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_CPU_DEP],
+         $1_CFLAGS_CPU="-march=i686"
+         AC_MSG_RESULT([yes, forcing ${$1_CFLAGS_CPU}])
+       else
+-        # Force compatibility with i586 on 32 bit intel platforms.
+-        $1_CFLAGS_CPU="-march=i586"
++        # Force compatibility with i686 on 32 bit intel platforms.
++        # clang does not know i586, and the Android x86 baseline is i686.
++        $1_CFLAGS_CPU="-march=i686"
+         AC_MSG_RESULT([no, forcing ${$1_CFLAGS_CPU}])
+       fi
+     else
+
+diff --git a/make/autoconf/flags-ldflags.m4 b/make/autoconf/flags-ldflags.m4
+index 23bb33e87..f8ad3d9f7 100644
+--- a/make/autoconf/flags-ldflags.m4
++++ b/make/autoconf/flags-ldflags.m4
+@@ -166,7 +166,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_CPU_DEP],
+   # build toolchain.
+   if test "x$TOOLCHAIN_TYPE" = xgcc; then
+     if test "x${OPENJDK_$1_CPU}" = xx86; then
+-      $1_CPU_LDFLAGS_JVM_ONLY="-march=i586"
++      $1_CPU_LDFLAGS_JVM_ONLY="-march=i686"
+     elif test "x$OPENJDK_$1_CPU" = xarm; then
+       $1_CPU_LDFLAGS_JVM_ONLY="${$1_CPU_LDFLAGS_JVM_ONLY} -fsigned-char"
+       $1_CPU_LDFLAGS="$ARM_ARCH_TYPE_FLAGS $ARM_FLOAT_TYPE_FLAGS"
