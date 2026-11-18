@@ -14,7 +14,6 @@ sudo apt -y install autoconf python3 python-is-python3 unzip zip systemtap-sdt-d
 wget -nc -nv -O android-ndk-$NDK_VERSION-linux-x86_64.zip "https://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip"
 
 sudo chmod 777 extract_ndk.sh
-sudo chmod 777 get_boot_jdk.sh
 sudo chmod 777 make_toolchain.sh
 sudo chmod 777 get_libs.sh
 sudo chmod 777 build_libs.sh
@@ -24,7 +23,6 @@ sudo chmod 777 remove_jdk_debug_info.sh
 sudo chmod 777 tar_jdk.sh
 
 ./extract_ndk.sh
-./get_boot_jdk.sh
 ./make_toolchain.sh
 ./get_libs.sh
 ./build_libs.sh

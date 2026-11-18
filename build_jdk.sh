@@ -37,8 +37,6 @@ ar cru dummy_libs/libthread_db.a
 # fix building libjawt
 ln -s -f $CUPS_DIR/cups $ANDROID_INCLUDE/
 
-export BOOT_JDK=$PWD/jdk-20
-
 cd openjdk
 
 # Apply patches. GNU patch absorbs minor context drift between the diff and
@@ -47,7 +45,6 @@ git reset --hard
 patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk17u_android.diff
 
 bash ./configure \
-    --with-boot-jdk=$BOOT_JDK \
     --openjdk-target=$TARGET \
     --with-extra-cflags="$CFLAGS" \
     --with-extra-cxxflags="$CFLAGS" \
