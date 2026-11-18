@@ -25,9 +25,14 @@ mv jreout/lib/libfreetype.dylib.6 jreout/lib/libfreetype.dylib || echo "Move exi
 # Recent jdk8u tags no longer install the external freetype into the image,
 # while libfontmanager's DT_NEEDED still references libfreetype.so. Restore
 # it from the freetype build output when the image does not carry the library.
+# The 64-bit x86 image puts libraries under lib/amd64, unlike the TARGET_JDK name.
+case "$TARGET_JDK" in
+  x86_64) image_lib_dir=amd64 ;;
+  *) image_lib_dir=$TARGET_JDK ;;
+esac
 export FREETYPE_DIR=$PWD/freetype-$BUILD_FREETYPE_VERSION/build_android-$TARGET_SHORT
-if [[ ! -f jreout/lib/${TARGET_JDK}/libfreetype.so ]]; then
-  cp $FREETYPE_DIR/lib/libfreetype.so jreout/lib/${TARGET_JDK}/libfreetype.so
+if [[ ! -f jreout/lib/${image_lib_dir}/libfreetype.so ]]; then
+  cp $FREETYPE_DIR/lib/libfreetype.so jreout/lib/${image_lib_dir}/libfreetype.so
 fi
 
 find jreout -name "*.diz" -delete
