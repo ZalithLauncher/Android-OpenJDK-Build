@@ -39,9 +39,10 @@ ln -s -f $CUPS_DIR/cups $ANDROID_INCLUDE/
 
 cd openjdk
 
-# Apply patches
+# Apply patches. GNU patch absorbs minor context drift between the diff and
+# the tagged source where git apply would reject the whole file.
 git reset --hard
-git apply --reject --whitespace=fix ../patches/jdk17u_android.diff || echo "git apply failed (Android patch set)"
+patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk17u_android.diff
 
 bash ./configure \
     --openjdk-target=$TARGET \

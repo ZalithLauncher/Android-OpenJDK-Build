@@ -2,17 +2,7 @@ diff --git a/make/autoconf/build-aux/config.sub b/make/autoconf/build-aux/config
 index 8f5a5cf52..34943b6ed 100644
 --- a/make/autoconf/build-aux/config.sub
 +++ b/make/autoconf/build-aux/config.sub
-@@ -47,7 +47,8 @@ if echo $* | grep pc-msys >/dev/null ; then
- fi
- 
- # Filter out everything that doesn't begin with "aarch64-"
--if ! echo $* | grep '^aarch64-' >/dev/null ; then
-+# or that ends with "-android"
-+if ! echo $* | egrep "^aarch64-|-android" >/dev/null ; then
-     . $DIR/autoconf-config.sub "$@"
-     # autoconf-config.sub exits, so we never reach here, but just in
-     # case we do:
-@@ -58,6 +59,10 @@ while test $# -gt 0 ; do
+@@ -40,6 +40,10 @@ while test $# -gt 0 ; do
      case $1 in
          -- )   # Stop option processing
              shift; break ;;
@@ -20,9 +10,9 @@ index 8f5a5cf52..34943b6ed 100644
 +            echo $1
 +            exit
 +            ;;
-         aarch64-* )
-             config=`echo $1 | sed 's/^aarch64-/arm-/'`
-             sub_args="$sub_args $config"
+         - )    # Use stdin as input.
+             sub_args="$sub_args $1"
+             shift; break ;;
 diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
 index 5eed1138f..b4319de67 100644
 --- a/make/autoconf/flags-cflags.m4
@@ -313,7 +303,7 @@ diff --git a/make/modules/jdk.jdwp.agent/Lib.gmk b/make/modules/jdk.jdwp.agent/L
 index aef358c14..7b9e5097c 100644
 --- a/make/modules/jdk.jdwp.agent/Lib.gmk
 +++ b/make/modules/jdk.jdwp.agent/Lib.gmk
-@@ -52,12 +52,14 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJDWP, \
+@@ -52,13 +52,15 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJDWP, \
      NAME := jdwp, \
      OPTIMIZATION := LOW, \
      CFLAGS := $(CFLAGS_JDKLIB) -DJDWP_LOGGING, \
@@ -321,6 +311,7 @@ index aef358c14..7b9e5097c 100644
      DISABLED_WARNINGS_gcc := unused-function, \
      DISABLED_WARNINGS_clang := sometimes-uninitialized format-nonliteral \
          self-assign, \
+     DISABLED_WARNINGS_microsoft_debugInit.c := 5287, \
      EXTRA_HEADER_DIRS := \
        include \
        libjdwp/export, \
@@ -2323,7 +2314,7 @@ index 9df8be1e6..12f9b4de3 100644
  typedef int futimens_func(int, const struct timespec *);
  typedef int lutimes_func(const char *, const struct timeval *);
  typedef DIR* fdopendir_func(int);
-@@ -149,10 +150,46 @@ static fstatat64_func* my_fstatat64_func = NULL;
+@@ -258,9 +259,45 @@ static fstatat64_func* my_fstatat64_func = NULL;
  static unlinkat_func* my_unlinkat_func = NULL;
  static renameat_func* my_renameat_func = NULL;
  static futimesat_func* my_futimesat_func = NULL;
@@ -2331,7 +2322,6 @@ index 9df8be1e6..12f9b4de3 100644
  static futimens_func* my_futimens_func = NULL;
  static lutimes_func* my_lutimes_func = NULL;
  static fdopendir_func* my_fdopendir_func = NULL;
- 
 +#ifdef __ANDROID__
 +/*
 + * TODO: Android lacks support for the methods listed below.  In it's place are
@@ -2367,9 +2357,9 @@ index 9df8be1e6..12f9b4de3 100644
 +}
 +#endif
 +
- /**
-  * fstatat missing from glibc on Linux.
-  */
+ #if defined(__linux__)
+ static statx_func* my_statx_func = NULL;
+ #endif
 @@ -272,6 +309,9 @@ Java_sun_nio_fs_UnixNativeDispatcher_init(JNIEnv* env, jclass this)
  #ifndef _ALLBSD_SOURCE
      my_futimesat_func = (futimesat_func*) dlsym(RTLD_DEFAULT, "futimesat");
