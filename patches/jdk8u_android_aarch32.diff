@@ -54,3 +54,26 @@ index 2883fc17..0292a17f 100644
  
  #define REG_FP 29
  #define SPELL_REG_SP "sp"
+diff --git a/common/autoconf/build-aux/config.sub b/common/autoconf/build-aux/config.sub
+index cc958da946..162e27c064 100644
+--- a/common/autoconf/build-aux/config.sub
++++ b/common/autoconf/build-aux/config.sub
+@@ -32,5 +32,6 @@
+ # First, filter out everything that doesn't begin with "aarch32-" or "aarch64-"
++# or the mobile platforms (android)
+-if ! echo $* | grep -E '^(aarch32-|aarch64-)' >/dev/null; then
++if ! echo $* | grep -E '^(aarch32-|aarch64-)|-android' >/dev/null; then
+     . $DIR/autoconf-config.sub "$@"
+     # autoconf-config.sub exits, so we never reach here, but just in
+     # case we do:
+@@ -43,6 +44,10 @@ while test $# -gt 0; do
+     case $1 in
+         --) # Stop option processing
+             shift; break ;;
++        *-android* )
++            echo $1
++            exit
++            ;;
+         aarch32-*)
+             config=`echo $1 | sed 's/^aarch32-/arm-/'`
+             sub_args="$sub_args $config"
