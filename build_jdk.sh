@@ -37,7 +37,7 @@ cd openjdk
 # the tagged source where git apply would reject the whole file.
 git reset --hard
 patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android.diff
-if [[ "$TARGET_JDK" != "arm" ]]; then
+if [[ "$TARGET_JDK" != "aarch32" ]]; then
   patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android_main.diff
 else
   patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android_aarch32.diff
