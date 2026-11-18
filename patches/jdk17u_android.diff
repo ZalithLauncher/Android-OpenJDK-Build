@@ -2588,3 +2588,22 @@ index 7bc14a0da..dbf0a806d 100644
  typedef unsigned int       __uint32_t;
  typedef unsigned short     __uint16_t;
  typedef unsigned long int  __uint64_t;
+
+diff --git a/make/autoconf/build-aux/config.guess b/make/autoconf/build-aux/config.guess
+index c02f91ebc..84b0a4de6 100644
+--- a/make/autoconf/build-aux/config.guess
++++ b/make/autoconf/build-aux/config.guess
+@@ -29,6 +29,13 @@
+ # and fix the broken property, if needed.
+ 
+ DIR=`dirname $0`
++
++# CC points at the target cross compiler when configure exports it.
++# autoconf-config.guess falls back to CC when probing the build machine's
++# ABI, which misdetects the 64-bit host as a 32-bit platform of the cross
++# toolchain (e.g. i686-pc-linux-gnu with a wrapped NDK clang). The build
++# platform probe must use a host compiler, so drop the cross CC here.
++unset CC
+ OUT=`. $DIR/autoconf-config.guess 2> /dev/null`
+ 
+ # Handle some cases that autoconf-config.guess is not capable of
