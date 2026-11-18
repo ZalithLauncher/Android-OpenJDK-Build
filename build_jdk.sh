@@ -33,16 +33,17 @@ ln -s -f $CUPS_DIR/cups $ANDROID_INCLUDE/
 
 cd openjdk
 
-# Apply patches
+# Apply patches. GNU patch absorbs minor context drift between the diffs and
+# the tagged source where git apply would reject the whole file.
 git reset --hard
-git apply --reject --whitespace=fix ../patches/jdk8u_android.diff || echo "git apply failed (universal patch set)"
-if [[ "$TARGET_JDK" != "aarch32" ]]; then
-  git apply --reject --whitespace=fix ../patches/jdk8u_android_main.diff || echo "git apply failed (main non-universal patch set)"
+patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android.diff
+if [[ "$TARGET_JDK" != "arm" ]]; then
+  patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android_main.diff
 else
-  git apply --reject --whitespace=fix ../patches/jdk8u_android_aarch32.diff || echo "git apply failed (aarch32 non-universal patch set)"
+  patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android_aarch32.diff
 fi
 if [[ "$TARGET_JDK" == "x86" ]]; then
-  git apply --reject --whitespace=fix ../patches/jdk8u_android_page_trap_fix.diff || echo "git apply failed (x86 page trap fix)"
+  patch -p1 --fuzz=6 --no-backup-if-mismatch < ../patches/jdk8u_android_page_trap_fix.diff
 fi
 
 bash ./configure \
